@@ -1,0 +1,121 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+<!--        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedArticles()" [disabled]="!selectedArticles || !selectedArticles.length" />-->
+    </ng-template>
+
+    <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template>
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="articles()"
+    [rows]="10"
+    [columns]="cols"
+    [paginator]="true"
+    [globalFilterFields]="['id',&#39;title&#39;,&#39;content&#39;]"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} articles"
+    [showCurrentPageReport]="true"
+    [rowsPerPageOptions]="[10, 20, 30]"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Manage Articles</h5>
+            <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+<!--            <th style="width: 3rem">-->
+<!--                <p-tableHeaderCheckbox />-->
+<!--            </th>-->
+            <th pSortableColumn="id" style="min-width:16rem">
+                Id
+                <p-sortIcon field="id" />
+            </th>
+                <th pSortableColumn="title" style="min-width:16rem">
+                    
+                    <p-sortIcon field="" />
+                </th>
+                <th pSortableColumn="content" style="min-width:16rem">
+                    
+                    <p-sortIcon field="" />
+                </th>
+            <th style="min-width: 12rem"></th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-article>
+        <tr>
+<!--            <td style="width: 3rem">-->
+<!--                <p-tableCheckbox [value]="article" />-->
+<!--            </td>-->
+            <td style="min-width: 12rem">{{ article.id }}</td>
+            <td style="min-width: 12rem">{{ article.title }}</td>
+
+            <td style="min-width: 12rem">{{ article.content }}</td>
+
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editArticle(article)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteArticle(article)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-drawer [(visible)]="createDialog" position="right" [style]="{ width: '450px' }" header="Article Details" [modal]="true">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <div>
+
+                <label for="title" class="block font-bold mb-3">title</label>
+                <input type="text" pInputText id="title" [(ngModel)]="article.title" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !article.title">title is required.</small>
+            </div>
+            <div>
+                <label for="content" class="block font-bold mb-3">content</label>
+                <textarea pTextarea [autoResize]="true" [(ngModel)]="article.content" fluid></textarea>
+                 <small class="text-red-500" *ngIf="submitted && !article.content">content is required.</small>
+            </div>
+            <div>
+
+                <label for="status" class="block font-bold mb-3">status</label>
+                <input type="text" pInputText id="status" [(ngModel)]="article.status" required autofocus fluid />
+                <small class="text-red-500" *ngIf="submitted && !article.status">status is required.</small>
+            </div>
+        <div>
+            <label for="tag" class="block font-bold mb-3"> tag</label>
+
+                <p-select [options]="tags()" [(ngModel)]="article.tag" optionLabel="id" [filter]="true" filterBy="id" [showClear]="true" placeholder="Start typing" class="w-full">
+                    <ng-template #selectedItem let-selectedOption>
+                        <div class="flex items-center gap-2">
+                            <div>{{ selectedOption.name }}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-item #item>
+                        <div class="flex items-center gap-2">
+                            <div>{{ item.name }}</div>
+                        </div>
+                    </ng-template>
+                </p-select>
+        </div>
+
+        </div>
+    </ng-template>
+    <ng-template #footer>
+        <div class="flex items-center  gap-2">
+            <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+            <p-button label="Save" icon="pi pi-check" (click)="saveArticle()" />
+        </div>
+    </ng-template>
+
+</p-drawer>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

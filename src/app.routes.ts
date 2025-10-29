@@ -5,6 +5,7 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { entitiesRoutes } from '@/pages/entities.routes';
 import { AuthGard } from '@/auth/auth-gard';
+import { Swagger } from '@/pages/pages/swagger/swagger';
 
 
 
@@ -15,6 +16,7 @@ export const appRoutes: Routes = [
         canActivate: [AuthGard],
         children: [
             { path: '', component: Dashboard },
+            { path: 'docs', component: Swagger},
             ...entitiesRoutes
 
         ]
